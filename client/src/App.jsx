@@ -16,7 +16,7 @@ import Notice from './components/Notice.jsx'
 import TodayCups from './components/TodayCups.jsx'
 
 // Only used to grey out buttons and word hints. The server enforces the real
-// limit (decision D9), so changing this number alone would not unlock anything.
+// limit, so changing this number alone would not unlock anything.
 const TODAY_LIMIT = 3
 
 export default function App() {
@@ -158,7 +158,7 @@ export default function App() {
       ariaLabel: `${spoken}: ${task.title}`,
       onClick: () => moveTask(task, list),
     })
-    // Greyed out when Today is full. The server would refuse anyway (D9).
+    // Greyed out when Today is full. The server would refuse anyway.
     const toToday = { ...move('today', 'Today', 'Move to Today'), disabled: todayFull }
 
     switch (task.list) {

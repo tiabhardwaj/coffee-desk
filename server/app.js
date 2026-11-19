@@ -7,7 +7,8 @@
 import express from 'express';
 import cors from 'cors';
 
-// The rule that defines the product. Lives here, on the server (decision D9).
+// The rule that defines the product. It lives here, on the server, so no
+// client (or hand-written request) can get around it.
 export const TODAY_LIMIT = 3;
 const LISTS = ['inbox', 'today', 'later', 'done'];
 
@@ -154,7 +155,7 @@ export function createApp(db) {
   });
 
   // A new day, a clean Today. Anything left on Today from an earlier day goes
-  // to Later. No "overdue", no red (decision D3). The client calls this when
+  // to Later. No "overdue", no red. The client calls this when
   // the app opens.
   app.post('/api/rollover', (req, res) => {
     const info = db
