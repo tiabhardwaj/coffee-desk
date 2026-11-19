@@ -137,6 +137,24 @@ test('rollover sends yesterday\'s Today tasks to Later, and leaves today\'s alon
   await close();
 });
 
+test('open runs the rollover and returns tasks and the running session in one call', async () => {
+  const { call, close } = await start();
+  const a = await addTask(call, 'from yesterday');
+  await call('PATCH', `/api/tasks/${a.id}`, { list: 'today' }, { 'X-Client-Date': '2026-10-13' });
+
+  const first = await call('POST', '/api/open', undefined, { 'X-Client-Date': '2026-10-14' });
+  assert.equal(first.status, 200);
+  assert.equal(first.body.moved, 1);
+  assert.equal(first.body.tasks.find((t) => t.id === a.id).list, 'later');
+  assert.equal(first.body.session, null);
+
+  const started = (await call('POST', '/api/sessions', { task_id: a.id })).body;
+  const second = await call('POST', '/api/open', undefined, { 'X-Client-Date': '2026-10-14' });
+  assert.equal(second.body.moved, 0);
+  assert.equal(second.body.session.id, started.id);
+  await close();
+});
+
 test('focus sessions: start, no second session at once, stop records seconds', async () => {
   const { db, call, close } = await start();
   const t = await addTask(call, 'deep work');
