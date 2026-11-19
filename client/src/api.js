@@ -52,12 +52,12 @@ async function request(method, path, body) {
 }
 
 export const api = {
+  // Rollover + tasks + running session in one request, used when the app opens.
+  open: () => request('POST', '/open'),
   listTasks: () => request('GET', '/tasks'),
   addTask: (title) => request('POST', '/tasks', { title }),
   moveTask: (id, list) => request('PATCH', `/tasks/${id}`, { list }),
   removeTask: (id) => request('DELETE', `/tasks/${id}`),
-  rollover: () => request('POST', '/rollover'),
-  activeSession: () => request('GET', '/sessions/active'),
   startSession: (taskId) => request('POST', '/sessions', { task_id: taskId }),
   stopSession: (id) => request('POST', `/sessions/${id}/stop`),
 }
