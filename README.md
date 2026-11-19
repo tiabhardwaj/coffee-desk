@@ -50,6 +50,7 @@ Run the API tests with `cd server \\\\\\\&\\\\\\\& npm test`.
 |PATCH|`/api/tasks/:id`|Rename and/or move. Body: `{ "title"?, "list"? }` where `list` is `inbox`, `today`, `later` or `done`. Returns `409 TODAY\\\\\\\_FULL` if Today already has 3 tasks|
 |DELETE|`/api/tasks/:id`|Remove a task|
 |POST|`/api/rollover`|Move tasks left on Today from an earlier day to Later|
+|POST|`/api/open`|Everything the app needs on open, in one request: runs the rollover, then returns `{ moved, tasks, session }`|
 |GET|`/api/sessions/active`|The running focus session, or `null`|
 |POST|`/api/sessions`|Start a focus session. Body: `{ "task\\\\\\\_id"? }`. `409` if one is running|
 |POST|`/api/sessions/:id/stop`|Stop a session and record its length|
