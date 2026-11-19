@@ -24,6 +24,7 @@ export default function App() {
   const [session, setSession] = useState(null) // the running focus session, or null
   const [notice, setNotice] = useState(null) // the one calm message on screen
   const [loadFailed, setLoadFailed] = useState(false)
+  const [slowStart, setSlowStart] = useState(false) // true if loading takes more than a few seconds
 
   // ------------------------------------------------------------ loading
 
@@ -56,6 +57,14 @@ export default function App() {
     // eslint-disable-next-line react/set-state-in-effect
     load()
   }, [load])
+  
+    // If the first load takes more than 3 seconds, the free API host is
+    // probably waking up from sleep. Say so, instead of a silent wait.
+    useEffect(() => {
+      if (state.loaded || loadFailed) return
+      const timer = setTimeout(() => setSlowStart(true), 3000)
+      return () => clearTimeout(timer)
+    }, [state.loaded, loadFailed])
 
   // Re-sync with the server after something unexpected (for example the
   // server said "Today is full" because another tab changed things).
@@ -204,7 +213,9 @@ export default function App() {
                 Try again
               </button>
             ) : (
-              'Loading your tasks…'
+              slowStart
+                ? 'Waking up the server. The first visit after a quiet spell can take up to a minute.'
+                : 'Loading your tasks…'
             )}
           </p>
         ) : (
