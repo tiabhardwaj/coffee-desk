@@ -1,4 +1,4 @@
-// Notice.jsx — the single place messages appear. Soft blue, never red (D3).
+// Notice.jsx — the single place messages appear. Soft blue, never red: red reads as alarm.
 //
 // The outer div is ALWAYS rendered and marked aria-live="polite". Screen
 // readers watch such a region and read out new content when it appears,

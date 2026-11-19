@@ -1,5 +1,5 @@
 // FocusTimer.jsx — a timer that counts UP, so there is never a deadline to
-// race against (D3).
+// race against.
 //
 // It does NOT keep its own count. The server stored when the session
 // started; every second we simply recompute "now minus started_at".

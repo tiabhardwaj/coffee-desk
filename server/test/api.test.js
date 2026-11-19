@@ -1,6 +1,6 @@
 // Run with: npm test
 // These tests talk to the real HTTP API (no UI), which is the point: they
-// prove the 3-task rule holds even when the frontend is bypassed (D9).
+// prove the 3-task rule holds even when the frontend is bypassed.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';

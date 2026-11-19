@@ -21,7 +21,7 @@ Live demo: https://coffee-desk-virid.vercel.app/
 |Database|SQLite (better-sqlite3)|Real SQL against a real schema with zero setup|
 |API|REST with JSON|Standard, easy to test and explain|
 
-The reasoning behind every choice is in [DECISIONS.md](DECISIONS.md). A file-by-file explanation is in [WALKTHROUGH.md](WALKTHROUGH.md).
+The trade-offs behind these choices, and what I would change next, are under [Limitations](#limitations-known-and-deliberate) below.
 
 ## Run it locally
 
@@ -62,7 +62,7 @@ Errors always look like `{ "error": { "code": "TODAY\\\\\\\_FULL", "message": ".
 2. **Frontend (for example Vercel).** Root directory `client`. Set `VITE\\\\\\\_API\\\\\\\_URL` to the API's URL, with no trailing slash, before building; changing it later needs a redeploy.
 3. Check `https://<your-api>/api/health` returns `{"ok":true}`.
 
-Free API tiers usually sleep when idle, so the first request after a pause can be slow.
+The free Render tier sleeps after 15 minutes idle; an UptimeRobot ping to /api/health every 5 minutes keeps it awake.
 
 ## Configuration and secrets
 

@@ -1,5 +1,5 @@
 // DoneLog.jsx — a quiet record of what you finished, grouped by day.
-// It deliberately has no streaks, scores or "days in a row" (D3). A missed
+// It deliberately has no streaks, scores or "days in a row", which turn rest into failure. A missed
 // day looks the same as any other day: it simply isn't there.
 
 import { dayLabel, formatMinutes, localDateKey } from '../format.js'
