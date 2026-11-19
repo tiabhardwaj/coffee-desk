@@ -58,7 +58,20 @@ export function createApp(db) {
   const app = express();
 
   // In production set CLIENT_ORIGIN to the deployed frontend's URL.
-  const origin = process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN.split(',') : true;
+  // Accept only explicit, valid http/https origins; otherwise disable CORS.
+  const configuredOrigins = (process.env.CLIENT_ORIGIN ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .filter((value) => {
+      try {
+        const parsed = new URL(value);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+      } catch {
+        return false;
+      }
+    });
+  const origin = configuredOrigins.length > 0 ? configuredOrigins : false;
   // maxAge: the browser checks CORS permission (a "preflight" request) before
   // calling the API from another domain. This lets it remember the answer for
   // 2 hours (Chrome's limit) instead of re-asking before almost every request.
