@@ -28,15 +28,15 @@ export default function App() {
 
   // ------------------------------------------------------------ loading
 
-  // On open: (1) move yesterday's Today tasks to Later, (2) fetch tasks and
-  // any running focus session. Order matters: rollover first, so the list we
-  // fetch is already tidy.
+  // On open, ONE request does it all: the server moves yesterday's Today
+  // tasks to Later, then returns the tidy task list and any running focus
+  // session. One round trip instead of two in a row makes the first screen
+  // appear sooner.
   const load = useCallback(async () => {
     try {
-      const { moved } = await api.rollover()
-      const [tasks, active] = await Promise.all([api.listTasks(), api.activeSession()])
+      const { moved, tasks, session } = await api.open()
       dispatch({ type: 'loaded', tasks })
-      setSession(active.session)
+      setSession(session)
       setLoadFailed(false)
       if (moved > 0) {
         const what = moved === 1 ? 'A task' : `${moved} tasks`
