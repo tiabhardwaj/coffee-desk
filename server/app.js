@@ -59,7 +59,10 @@ export function createApp(db) {
 
   // In production set CLIENT_ORIGIN to the deployed frontend's URL.
   const origin = process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN.split(',') : true;
-  app.use(cors({ origin }));
+  // maxAge: the browser checks CORS permission (a "preflight" request) before
+  // calling the API from another domain. This lets it remember the answer for
+  // 2 hours (Chrome's limit) instead of re-asking before almost every request.
+  app.use(cors({ origin, maxAge: 7200 }));
   app.use(express.json());
 
   // ---- SQL used by several routes is prepared once here (parsed once, reused).
@@ -155,13 +158,21 @@ export function createApp(db) {
   });
 
   // A new day, a clean Today. Anything left on Today from an earlier day goes
-  // to Later. No "overdue", no red. The client calls this when
-  // the app opens.
+  // to Later. No "overdue", no red.
+  const rollover = db.prepare(
+    "UPDATE tasks SET list = 'later', today_date = NULL WHERE list = 'today' AND today_date < ?",
+  );
+
   app.post('/api/rollover', (req, res) => {
-    const info = db
-      .prepare("UPDATE tasks SET list = 'later', today_date = NULL WHERE list = 'today' AND today_date < ?")
-      .run(clientDate(req));
-    res.json({ moved: info.changes });
+    res.json({ moved: rollover.run(clientDate(req)).changes });
+  });
+
+  // Everything the app needs when it opens, in ONE round trip: tidy up
+  // yesterday's Today first, then return the tasks and any running focus
+  // session. The client calls this when the app opens.
+  app.post('/api/open', (req, res) => {
+    const moved = rollover.run(clientDate(req)).changes;
+    res.json({ moved, tasks: listTasks.all(), session: getActiveSession.get() ?? null });
   });
 
   // ------------------------------------------------------ focus sessions
